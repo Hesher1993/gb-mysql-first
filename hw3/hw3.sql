@@ -94,7 +94,7 @@ JOIN salaries ON employees.emp_no = salaries.emp_no
 WHERE employees.emp_no = 43624
 GROUP BY employees.emp_no
 ORDER BY max_salary DESC
-LIMIT 10;
+LIMIT 1;
 -- +--------+----------------+------------+
 -- | emp_no | name           | max_salary |
 -- +--------+----------------+------------+
