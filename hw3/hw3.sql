@@ -81,12 +81,20 @@
 -- 3. Удалить одного сотрудника, у которого максимальная зарплата.
 -- 4. Посчитать количество сотрудников во всех отделах.
 -- 5. Найти количество сотрудников в отделах и посмотреть, сколько всего денег получает отдел.
--- mysql> SELECT employees.emp_no, CONCAT(employees.first_name, ' ', employees.last_name) as name, MAX(salaries.salary) as max_salary FROM employees JOIN salaries ON employees.emp_no = salaries.emp_no WHERE employees.emp_no = 43624 GROUP BY employees.emp_no ORDER BY max_salary DESC LIMIT 10;
--- +--------+----------------+------------+
--- | emp_no | name           | max_salary |
--- +--------+----------------+------------+
--- |  43624 | Tokuyasu Pesch |     158220 |
--- +--------+----------------+------------+
--- 1 row in set (0.00 sec)
+-- mysql> SELECT departments.dept_name as dept_name, COUNT(*) as count_salary, SUM(salaries.salary) as max_salary FROM departments JOIN dept_emp ON departments.dept_no = dept_emp.dept_no JOIN employees ON employees.emp_no = dept_emp.emp_no JOIN salaries ON employees.emp_no = salaries.emp_no GROUP BY departments.dept_no ORDER BY max_salary;
+-- +--------------------+--------------+-------------+
+-- | dept_name          | count_salary | max_salary  |
+-- +--------------------+--------------+-------------+
+-- | Human Resources    |       168490 |  9363811425 |
+-- | Quality Management |       189781 | 10865203635 |
+-- | Finance            |       165285 | 11650834677 |
+-- | Research           |       200615 | 11969730427 |
+-- | Customer Service   |       223644 | 13143639841 |
+-- | Marketing          |       190861 | 13725425266 |
+-- | Sales              |       496235 | 40030089342 |
+-- | Production         |       697158 | 41554438942 |
+-- | Development        |       810026 | 48179456393 |
+-- +--------------------+--------------+-------------+
+-- 9 rows in set (13.21 sec)
 
 -- mysql>
