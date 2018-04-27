@@ -52,10 +52,6 @@ ALTER TABLE `_cities`
   DROP COLUMN `area_cz`,
   DROP COLUMN `region_cz`;
 
-ALTER TABLE `_cities` ALTER `title_ru` DROP DEFAULT;
-ALTER TABLE `_cities` CHANGE COLUMN `title_ru` `title` VARCHAR(150) NOT NULL;
-ALTER TABLE `_cities` ADD INDEX (`title`);
-
 ALTER TABLE `_regions`
   DROP COLUMN `title_ua`,
   DROP COLUMN `title_be`,
@@ -70,10 +66,6 @@ ALTER TABLE `_regions`
   DROP COLUMN `title_lt`,
   DROP COLUMN `title_lv`,
   DROP COLUMN `title_cz`;
-
-ALTER TABLE `_regions` ALTER `title_ru` DROP DEFAULT;
-ALTER TABLE `_regions` CHANGE COLUMN `title_ru` `title` VARCHAR(150) NOT NULL;
-ALTER TABLE `_regions` ADD INDEX (`title`);
 
 ALTER TABLE `_countries`
   DROP COLUMN `title_ua`,
@@ -90,6 +82,15 @@ ALTER TABLE `_countries`
   DROP COLUMN `title_lv`,
   DROP COLUMN `title_cz`;
 
+
+ALTER TABLE `_cities` ALTER `title_ru` DROP DEFAULT;
+ALTER TABLE `_cities` CHANGE COLUMN `title_ru` `title` VARCHAR(150) NOT NULL;
+ALTER TABLE `_cities` ADD INDEX (`title`);
+
+ALTER TABLE `_regions` ALTER `title_ru` DROP DEFAULT;
+ALTER TABLE `_regions` CHANGE COLUMN `title_ru` `title` VARCHAR(150) NOT NULL;
+ALTER TABLE `_regions` ADD INDEX (`title`);
+
 ALTER TABLE `_countries` ALTER `title_ru` DROP DEFAULT;
 ALTER TABLE `_countries` CHANGE COLUMN `title_ru` `title` VARCHAR(150) NOT NULL;
 ALTER TABLE `_countries` ADD INDEX (`title`);
@@ -97,27 +98,25 @@ ALTER TABLE `_countries` ADD INDEX (`title`);
 
 ALTER TABLE `_cities` ALTER `city_id` DROP DEFAULT;
 ALTER TABLE `_cities` CHANGE COLUMN `city_id` `id` INT(11) NOT NULL FIRST;
-
+ALTER TABLE `_cities` ADD PRIMARY KEY (`id`);
+ALTER TABLE `_cities` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT FIRST;
 
 ALTER TABLE `_regions` ALTER `region_id` DROP DEFAULT;
 ALTER TABLE `_regions` CHANGE COLUMN `region_id` `id` INT(11) NOT NULL FIRST;
 ALTER TABLE `_regions` ADD PRIMARY KEY (`id`);
 ALTER TABLE `_regions` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT FIRST;
 
-ALTER TABLE `_regions` CHANGE COLUMN `country_id` `country_id` INT(11) NOT NULL;
-ALTER TABLE `_regions` ADD CONSTRAINT region_country FOREIGN KEY (`country_id`) REFERENCES `_countries` (id) ON DELETE CASCADE ON UPDATE CASCADE;
-
-
 ALTER TABLE `_countries` ALTER `country_id` DROP DEFAULT;
 ALTER TABLE `_countries` CHANGE COLUMN `country_id` `id` INT(11) NOT NULL FIRST;
-ALTER TABLE `_countries` ADD PRIMARY KEY (`id`);
-ALTER TABLE `_countries` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT FIRST;
 
-
-ALTER TABLE `_cities` ADD PRIMARY KEY (`id`);
-ALTER TABLE `_cities` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT FIRST;
 
 ALTER TABLE `_cities` CHANGE COLUMN `country_id` `country_id` INT(11) NOT NULL;
 ALTER TABLE `_cities` ADD CONSTRAINT city_country FOREIGN KEY (`country_id`) REFERENCES `_countries` (id) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `_cities` CHANGE COLUMN `region_id` `region_id` INT(11) NOT NULL;
 ALTER TABLE `_cities` ADD CONSTRAINT city_region FOREIGN KEY (`region_id`) REFERENCES `_regions` (id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `_regions` CHANGE COLUMN `country_id` `country_id` INT(11) NOT NULL;
+ALTER TABLE `_regions` ADD CONSTRAINT region_country FOREIGN KEY (`country_id`) REFERENCES `_countries` (id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `_countries` ADD PRIMARY KEY (`id`);
+ALTER TABLE `_countries` CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT FIRST;
