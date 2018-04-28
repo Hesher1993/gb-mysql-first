@@ -125,28 +125,7 @@ WHERE emp_no = (
 );
 
 -- 4. Посчитать количество сотрудников во всех отделах.
-SELECT
-  dp.dept_name,
-  COUNT(de.emp_no) as count
-FROM departments dp
-  JOIN dept_emp de ON de.dept_no = dp.dept_no
-GROUP BY dp.dept_no;
--- +--------------------+-------+
--- | dept_name          | count |
--- +--------------------+-------+
--- | Marketing          | 20211 |
--- | Finance            | 17346 |
--- | Human Resources    | 17786 |
--- | Production         | 73485 |
--- | Development        | 85707 |
--- | Quality Management | 20117 |
--- | Sales              | 52245 |
--- | Research           | 21126 |
--- | Customer Service   | 23580 |
--- +--------------------+-------+
--- 9 rows in set (0.14 sec)
-
--- 4.2 По настоящее время
+-- Т.к. есть сотрудники которые переходили из отдела в отдел выбираем еще по дате
 SELECT
   dp.dept_name,
   COUNT(de.emp_no) as count
@@ -172,8 +151,7 @@ GROUP BY dp.dept_no;
 
 
 -- 5. Найти количество сотрудников в отделах и посмотреть, сколько всего денег получает отдел.
--- тут есть ошибка в том что он считает количество выплат ЗП и их сумму...
--- в таблице сотрудников всего 300000+
+-- Выбираем сотрудников работающих по настоящее время и их уровень ЗП по настоящее время.
 SELECT
   dp.dept_name,
   COUNT(de.emp_no) as count,
@@ -181,20 +159,22 @@ SELECT
 FROM departments dp
   JOIN dept_emp de
     ON de.dept_no = dp.dept_no
+    AND de.to_date > NOW()
   JOIN salaries s
     ON de.emp_no = s.emp_no
+    AND s.to_date > NOW()
 GROUP BY dp.dept_no;
--- +--------------------+--------------+-------------+
--- | dept_name          | count_salary | max_salary  |
--- +--------------------+--------------+-------------+
--- | Human Resources    |       168490 |  9363811425 |
--- | Quality Management |       189781 | 10865203635 |
--- | Finance            |       165285 | 11650834677 |
--- | Research           |       200615 | 11969730427 |
--- | Customer Service   |       223644 | 13143639841 |
--- | Marketing          |       190861 | 13725425266 |
--- | Sales              |       496235 | 40030089342 |
--- | Production         |       697158 | 41554438942 |
--- | Development        |       810026 | 48179456393 |
--- +--------------------+--------------+-------------+
--- 9 rows in set (13.21 sec)
+-- +--------------------+-------+------------+
+-- | dept_name          | count | sum_salary |
+-- +--------------------+-------+------------+
+-- | Marketing          | 14842 | 1188233434 |
+-- | Finance            | 12437 |  977049936 |
+-- | Human Resources    | 12898 |  824464664 |
+-- | Production         | 53304 | 3616319369 |
+-- | Development        | 61386 | 4153249050 |
+-- | Quality Management | 14546 |  951919236 |
+-- | Sales              | 37700 | 3349687582 |
+-- | Research           | 15441 | 1048650423 |
+-- | Customer Service   | 17569 | 1182134209 |
+-- +--------------------+-------+------------+
+-- 9 rows in set (2.02 sec)
