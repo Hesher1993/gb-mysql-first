@@ -44,11 +44,13 @@ LIMIT 5;
 
 -- База данных «Сотрудники».
 -- 1. Выбрать среднюю зарплату по отделам.
-SELECT departments.dept_name, AVG(salaries.salary)
-FROM departments
-JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
-JOIN salaries ON dept_emp.emp_no = salaries.emp_no
-GROUP BY departments.dept_name;
+SELECT
+  dp.dept_name as dept_name,
+  AVG(s.salary) as avg_salary
+FROM departments dp
+  JOIN dept_emp de ON dp.dept_no = de.dept_no
+  JOIN salaries s ON de.emp_no = s.emp_no
+GROUP BY dp.dept_name;
 -- +--------------------+----------------------+
 -- | dept_name          | AVG(salaries.salary) |
 -- +--------------------+----------------------+
@@ -66,12 +68,15 @@ GROUP BY departments.dept_name;
 
 -- 2. Выбрать максимальную зарплату у сотрудника.
 -- Максимальная зарплата у всех сотрудников
-SELECT employees.emp_no, CONCAT(employees.first_name, ' ', employees.last_name) as name, MAX(salaries.salary) as max_salary
-FROM employees
-LEFT JOIN salaries ON employees.emp_no = salaries.emp_no
-GROUP BY employees.emp_no
-ORDER BY max_salary DESC
-LIMIT 10;
+SELECT
+  e.emp_no,
+  CONCAT(e.first_name, ' ', e.last_name) as name,
+  MAX(s.salary) as max_salary
+FROM employees e
+  JOIN salaries s ON e.emp_no = s.emp_no
+GROUP BY e.emp_no
+ORDER BY max_salary
+DESC LIMIT 10;
 -- +--------+-------------------+------------+
 -- | emp_no | name              | max_salary |
 -- +--------+-------------------+------------+
@@ -88,11 +93,14 @@ LIMIT 10;
 -- +--------+-------------------+------------+
 -- 10 rows in set (3.55 sec)
 -- Максимальная зарплата у одного сотрудника
-SELECT employees.emp_no, CONCAT(employees.first_name, ' ', employees.last_name) as name, MAX(salaries.salary) as max_salary
-FROM employees
-JOIN salaries ON employees.emp_no = salaries.emp_no
-WHERE employees.emp_no = 43624
-GROUP BY employees.emp_no
+SELECT
+  e.emp_no,
+  CONCAT(e.first_name, ' ', e.last_name) as name,
+  MAX(s.salary) as max_salary
+FROM employees e
+  JOIN salaries s ON e.emp_no = s.emp_no
+WHERE e.emp_no = 43624
+GROUP BY e.emp_no
 ORDER BY max_salary DESC
 LIMIT 1;
 -- +--------+----------------+------------+
