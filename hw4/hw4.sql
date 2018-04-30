@@ -48,7 +48,7 @@ FROM departments dp
   JOIN dept_emp de
     ON de.dept_no = dp.dept_no
     AND de.to_date > NOW()
-GROUP BY dp.dept_no;
+GROUP BY dp.dept_name;
 -- количество сотрудников в отделах и посмотреть, сколько всего денег получает отдел.
 CREATE VIEW view_count_emp_salary_dept
 AS SELECT

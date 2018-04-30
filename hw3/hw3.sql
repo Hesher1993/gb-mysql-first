@@ -131,7 +131,7 @@ FROM departments dp
   JOIN dept_emp de
     ON de.dept_no = dp.dept_no
     AND de.to_date > NOW()
-GROUP BY dp.dept_no;
+GROUP BY dp.dept_name;
 -- +--------------------+-------+
 -- | dept_name          | count |
 -- +--------------------+-------+
