@@ -23,10 +23,10 @@ LIMIT 10;
 -- | Абакан       | Хакасия               | Россия       |
 -- | Альметьевск  | Татарстан             | Россия       |
 -- +--------------+-----------------------+--------------+
--- 10 rows in set (0.38 sec)
+-- 10 rows in set (0.00 sec)
 
 -- 2. Выбрать все города из Московской области.
-SELECT r.title as region_name, c.title as city_name
+SELECT r.title as region_name, ci.title as city_name
 FROM _regions r
 JOIN _cities ci ON r.id = ci.region_id
 WHERE r.title = 'Московская область'
