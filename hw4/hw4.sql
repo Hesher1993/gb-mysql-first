@@ -1,5 +1,5 @@
 -- 1. Создать VIEW на основе запросов, которые вы сделали в ДЗ к уроку 3.
-USE 'geodata';
+USE geodata;
 -- все данные о городе – регион, страна.
 CREATE VIEW view_about_cities
 AS SELECT
@@ -18,7 +18,7 @@ JOIN _cities ci ON r.id = ci.region_id
 WHERE r.title = 'Московская область'
 LIMIT 5;
 
-USE 'employees';
+USE employees;
 -- средняя зарплату по отделам.
 CREATE VIEW view_avg_salary_dept
 AS SELECT
