@@ -1,0 +1,139 @@
+mysql> -- 1. Создать VIEW на основе запросов, которые вы сделали в ДЗ к уроку 3.
+mysql> USE geodata;
+Database changed
+mysql> -- все данные о городе - регион, страна.
+mysql> CREATE VIEW view_about_cities
+    -> AS SELECT
+    ->   ci.title as city_name,
+    ->   r.title as region_name,
+    ->   co.title as country_name
+    -> FROM _cities ci
+    ->   JOIN _regions r ON ci.region_id = r.id
+    -> JOIN _countries co ON ci.country_id = co.id
+    -> LIMIT 10;
+mysql> SELECT * FROM view_about_cities;
++--------------+-----------------------+--------------+
+| city_name    | region_name           | country_name |
++--------------+-----------------------+--------------+
+| Отрадное     | Ленинградская область | Россия       |
+| Чоп          | Закарпатская область  | Украина      |
+| Череповец    | Вологодская область   | Россия       |
+| Buenos Aires | Distrito Federal      | Аргентина    |
+| Волгоград    | Волгоградская область | Россия       |
+| Северодвинск | Архангельская область | Россия       |
+| Борок        | Ярославская область   | Россия       |
+| Torino       | Regione Piemonte      | Италия       |
+| Абакан       | Хакасия               | Россия       |
+| Альметьевск  | Татарстан             | Россия       |
++--------------+-----------------------+--------------+
+10 rows in set (0.00 sec)
+mysql> -- все города из Московской области.
+mysql> CREATE VIEW view_region_moscow
+    -> AS SELECT r.title as region_name, ci.title as city_name
+    -> FROM _regions r
+    -> JOIN _cities ci ON r.id = ci.region_id
+    -> WHERE r.title = 'Московская область'
+    -> LIMIT 5;
+mysql> SELECT * FROM view_region_moscow;
+Empty set (0.00 sec)
+mysql>
+mysql> USE employees;
+Database changed
+mysql> -- средняя зарплату по отделам.
+mysql> CREATE VIEW view_avg_salary_dept
+    -> AS SELECT
+    ->   dp.dept_name as dept_name,
+    ->   AVG(s.salary) as avg_salary
+    -> FROM departments dp
+    ->   JOIN dept_emp de ON dp.dept_no = de.dept_no
+    ->   JOIN salaries s ON de.emp_no = s.emp_no
+    -> GROUP BY dp.dept_name;
+mysql> SELECT * FROM view_avg_salary_dept;
++--------------------+------------+
+| dept_name          | avg_salary |
++--------------------+------------+
+| Customer Service   | 58770.3665 |
+| Development        | 59478.9012 |
+| Finance            | 70489.3649 |
+| Human Resources    | 55574.8794 |
+| Marketing          | 71913.2000 |
+| Production         | 59605.4825 |
+| Quality Management | 57251.2719 |
+| Research           | 59665.1817 |
+| Sales              | 80667.6058 |
++--------------------+------------+
+9 rows in set (2.52 sec)
+mysql> -- Максимальная зарплата у одного сотрудника
+mysql> CREATE VIEW view_max_salary_emp
+    -> AS SELECT
+    ->   e.emp_no,
+    ->   CONCAT(e.first_name, ' ', e.last_name) as name,
+    ->   MAX(s.salary) as max_salary
+    -> FROM employees e
+    ->   JOIN salaries s ON e.emp_no = s.emp_no
+    -> GROUP BY e.emp_no
+    -> ORDER BY max_salary DESC
+    -> LIMIT 1;
+mysql> SELECT * FROM view_max_salary_emp;
++--------+----------------+------------+
+| emp_no | name           | max_salary |
++--------+----------------+------------+
+|  43624 | Tokuyasu Pesch |     158220 |
++--------+----------------+------------+
+1 row in set (2.34 sec)
+
+mysql> -- количество сотрудников во всех отделах.
+mysql> CREATE VIEW view_count_emp_dept
+    -> AS SELECT
+    ->   dp.dept_name,
+    ->   COUNT(de.emp_no) as count
+    -> FROM departments dp
+    ->   JOIN dept_emp de
+    ->     ON de.dept_no = dp.dept_no
+    ->     AND de.to_date > NOW()
+    -> GROUP BY dp.dept_name;
+mysql> SELECT * FROM view_count_emp_dept;
++--------------------+-------+
+| dept_name          | count |
++--------------------+-------+
+| Customer Service   | 17569 |
+| Development        | 61386 |
+| Finance            | 12437 |
+| Human Resources    | 12898 |
+| Marketing          | 14842 |
+| Production         | 53304 |
+| Quality Management | 14546 |
+| Research           | 15441 |
+| Sales              | 37701 |
++--------------------+-------+
+9 rows in set (0.80 sec)
+
+mysql> -- количество сотрудников в отделах и посмотреть, сколько всего денег получает отдел.
+mysql> CREATE VIEW view_count_emp_salary_dept
+    -> AS SELECT
+    ->   dp.dept_name,
+    ->   COUNT(de.emp_no) as count,
+    ->   SUM(s.salary) as sum_salary
+    -> FROM departments dp
+    ->   JOIN dept_emp de
+    ->     ON de.dept_no = dp.dept_no
+    ->     AND de.to_date > NOW()
+    ->   JOIN salaries s
+    ->     ON de.emp_no = s.emp_no
+    ->     AND s.to_date > NOW()
+    -> GROUP BY dp.dept_name;
+mysql> SELECT * FROM view_count_emp_salary_dept;
++--------------------+-------+------------+
+| dept_name          | count | sum_salary |
++--------------------+-------+------------+
+| Customer Service   | 17569 | 1182134209 |
+| Development        | 61386 | 4153249050 |
+| Finance            | 12437 |  977049936 |
+| Human Resources    | 12898 |  824464664 |
+| Marketing          | 14842 | 1188233434 |
+| Production         | 53304 | 3616319369 |
+| Quality Management | 14546 |  951919236 |
+| Research           | 15441 | 1048650423 |
+| Sales              | 37701 | 3349845802 |
++--------------------+-------+------------+
+9 rows in set (2.60 sec)

@@ -10,6 +10,7 @@ FROM _cities ci
   JOIN _regions r ON ci.region_id = r.id
 JOIN _countries co ON ci.country_id = co.id
 LIMIT 10;
+SELECT * FROM view_about_cities;
 -- все города из Московской области.
 CREATE VIEW view_region_moscow
 AS SELECT r.title as region_name, ci.title as city_name
@@ -17,6 +18,7 @@ FROM _regions r
 JOIN _cities ci ON r.id = ci.region_id
 WHERE r.title = 'Московская область'
 LIMIT 5;
+SELECT * FROM view_region_moscow;
 
 USE employees;
 -- средняя зарплату по отделам.
@@ -28,6 +30,7 @@ FROM departments dp
   JOIN dept_emp de ON dp.dept_no = de.dept_no
   JOIN salaries s ON de.emp_no = s.emp_no
 GROUP BY dp.dept_name;
+SELECT * FROM view_avg_salary_dept;
 -- Максимальная зарплата у одного сотрудника
 CREATE VIEW view_max_salary_emp
 AS SELECT
@@ -39,6 +42,7 @@ FROM employees e
 GROUP BY e.emp_no
 ORDER BY max_salary DESC
 LIMIT 1;
+SELECT * FROM view_max_salary_emp;
 -- количество сотрудников во всех отделах.
 CREATE VIEW view_count_emp_dept
 AS SELECT
@@ -49,6 +53,7 @@ FROM departments dp
     ON de.dept_no = dp.dept_no
     AND de.to_date > NOW()
 GROUP BY dp.dept_name;
+SELECT * FROM view_count_emp_dept;
 -- количество сотрудников в отделах и посмотреть, сколько всего денег получает отдел.
 CREATE VIEW view_count_emp_salary_dept
 AS SELECT
@@ -63,6 +68,7 @@ FROM departments dp
     ON de.emp_no = s.emp_no
     AND s.to_date > NOW()
 GROUP BY dp.dept_name;
+SELECT * FROM view_count_emp_salary_dept;
 ---------------------------------------------------
 -- 2. Создать функцию, которая найдет менеджера по имени и фамилии.
 
