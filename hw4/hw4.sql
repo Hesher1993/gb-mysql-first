@@ -71,6 +71,30 @@ GROUP BY dp.dept_name;
 SELECT * FROM view_count_emp_salary_dept;
 ---------------------------------------------------
 -- 2. Создать функцию, которая найдет менеджера по имени и фамилии.
-
----------------------------------------------------
+-- Найдем менеджера работающего по настоящее время (таблица dept_manager)
+DELIMITER //
+CREATE FUNCTION func_find_manager (first_name VARCHAR(60), last_name VARCHAR(60))
+  RETURNS INT DETERMINISTIC
+  BEGIN
+    DECLARE EMP_NO INT;
+    SELECT e.emp_no INTO EMP_NO
+    FROM employees e
+      JOIN dept_manager dm ON e.emp_no = dm.emp_no AND dm.to_date >= NOW()
+    WHERE e.first_name = first_name AND e.last_name = last_name
+    LIMIT 1;
+    RETURN EMP_NO;
+  END //
+DELIMITER ;
+SELECT func_find_manager('Vishwani', 'Minakawa') as emp_no_manager;
 -- 3. Создать триггер, который при добавлении нового сотрудника будет выплачивать ему вступительный бонус в таблицу salary.
+DELIMITER //
+CREATE TRIGGER `insert_employees`
+  AFTER INSERT
+  ON employees
+  FOR EACH ROW
+  BEGIN
+    INSERT INTO salaries
+    SET emp_no = NEW.emp_no, salary = 10000, from_date = NOW(), to_date = '9999-01-01';
+  END //
+DELIMITER ;
+INSERT INTO employees (emp_no, first_name, last_name, gender, birth_date, hire_date) VALUES ('500000','Ivan', 'Ivanov', 'M', '1970-10-10', '2018-04-30');
