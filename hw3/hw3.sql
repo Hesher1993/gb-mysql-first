@@ -160,7 +160,7 @@ FROM departments dp
   JOIN salaries s
     ON de.emp_no = s.emp_no
     AND s.to_date > NOW()
-GROUP BY dp.dept_no;
+GROUP BY dp.dept_name;
 -- +--------------------+-------+------------+
 -- | dept_name          | count | sum_salary |
 -- +--------------------+-------+------------+
