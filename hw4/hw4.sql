@@ -76,13 +76,13 @@ DELIMITER //
 CREATE FUNCTION func_find_manager (first_name VARCHAR(60), last_name VARCHAR(60))
   RETURNS INT DETERMINISTIC
   BEGIN
-    DECLARE EMP_NO INT;
-    SELECT e.emp_no INTO EMP_NO
+    DECLARE emp_no INT;
+    SELECT e.emp_no INTO emp_no
     FROM employees e
       JOIN dept_manager dm ON e.emp_no = dm.emp_no AND dm.to_date >= NOW()
     WHERE e.first_name = first_name AND e.last_name = last_name
     LIMIT 1;
-    RETURN EMP_NO;
+    RETURN emp_no;
   END //
 DELIMITER ;
 SELECT func_find_manager('Vishwani', 'Minakawa') as emp_no_manager;
