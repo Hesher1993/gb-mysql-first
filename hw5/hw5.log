@@ -36,3 +36,64 @@ Current database: geodata
 |  1 | SIMPLE      | r     | eq_ref | PRIMARY       | PRIMARY | 4       | geodata.ci.region_id |       1 | Using where |
 +----+-------------+-------+--------+---------------+---------+---------+----------------------+---------+-------------+
 2 rows in set (0.01 sec)
+mysql> -- 2. Подумать, какие операции являются транзакционными, и написать несколько примеров с транзакционными запросами.
+mysql> USE employees;
+Database changed
+mysql> SET AUTOCOMMIT = 0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> INSERT INTO
+    ->   employees (emp_no, first_name, last_name, gender, birth_date, hire_date)
+    -> VALUES ('500000','Ivan', 'Ivanov', 'M', '1970-10-10', '2018-04-30');
+ERROR 1062 (23000): Duplicate entry '500000' for key 'PRIMARY'
+mysql> INSERT INTO
+    ->   salaries
+    ->   SET
+    ->     emp_no = '500000',
+    ->     salary = 10000,
+    ->     from_date = NOW(),
+    ->     to_date = '9999-01-01';
+ERROR 1062 (23000): Duplicate entry '500000-2018-05-04' for key 'PRIMARY'
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SET AUTOCOMMIT = 1;
+Query OK, 0 rows affected (0.00 sec)
+mysql> -- 3. Проанализировать несколько запросов с помощью EXPLAIN.
+mysql> -- завпросы из п.1 с индексами
+mysql> EXPLAIN SELECT
+    ->   ci.title as city_name,
+    ->   r.title as region_name,
+    ->   co.title as country_name
+    -> FROM _cities ci
+    ->   JOIN _regions r ON ci.region_id = r.id
+    ->   JOIN _countries co ON ci.country_id = co.id;
+ERROR 2006 (HY000): MySQL server has gone away
+No connection. Trying to reconnect...
+Connection id:    5
+Current database: geodata
+
++----+-------------+-------+--------+---------------+--------------+---------+----------------------+------+-------------+
+| id | select_type | table | type   | possible_keys | key          | key_len | ref                  | rows | Extra       |
++----+-------------+-------+--------+---------------+--------------+---------+----------------------+------+-------------+
+|  1 | SIMPLE      | co    | index  | PRIMARY       | title        | 452     | NULL                 |  234 | Using index |
+|  1 | SIMPLE      | ci    | ref    | city_country  | city_country | 4       | geodata.co.id        | 5017 | NULL        |
+|  1 | SIMPLE      | r     | eq_ref | PRIMARY       | PRIMARY      | 4       | geodata.ci.region_id |    1 | NULL        |
++----+-------------+-------+--------+---------------+--------------+---------+----------------------+------+-------------+
+3 rows in set (0.01 sec)
+mysql> EXPLAIN SELECT
+    ->   r.title as region_name,
+    ->   ci.title as city_name
+    -> FROM _regions r
+    ->   JOIN _cities ci ON r.id = ci.region_id
+    -> WHERE r.title = 'Московская область';
++----+-------------+-------+------+---------------+-------+---------+-------+---------+----------------------------------------------------+
+| id | select_type | table | type | possible_keys | key   | key_len | ref   | rows    | Extra                                              |
++----+-------------+-------+------+---------------+-------+---------+-------+---------+----------------------------------------------------+
+|  1 | SIMPLE      | r     | ref  | PRIMARY,title | title | 452     | const |       1 | Using where; Using index                           |
+|  1 | SIMPLE      | ci    | ALL  | NULL          | NULL  | NULL    | NULL  | 2207714 | Using where; Using join buffer (Block Nested Loop) |
++----+-------------+-------+------+---------------+-------+---------+-------+---------+----------------------------------------------------+
+2 rows in set (0.00 sec)
