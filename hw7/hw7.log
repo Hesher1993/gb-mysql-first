@@ -1,0 +1,93 @@
+-- 1. Создать нового пользователя и задать ему права доступа на базу данных «Страны и города мира».
+
+mysql> CREATE USER 'lesson7'@'localhost' IDENTIFIED BY '123123';
+ERROR 2006 (HY000): MySQL server has gone away
+No connection. Trying to reconnect...
+Connection id:    2
+Current database: *** NONE ***
+
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> SELECT user,host FROM mysql.user;
+ERROR 2006 (HY000): MySQL server has gone away
+No connection. Trying to reconnect...
+Connection id:    3
+Current database: *** NONE ***
+
++---------+-----------+
+| user    | host      |
++---------+-----------+
+| mysql   | %         |
+| root    | %         |
+| gb-php  | localhost |
+| lesson7 | localhost |
++---------+-----------+
+4 rows in set (0.06 sec)
+
+mysql> GRANT ALL PRIVILEGES ON `geodata`.* TO 'lesson7'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.02 sec)
+
+-- 2. Сделать резервную копию базы, удалить базу и пересоздать из бекапа.
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqldump -u root -p geodata > /dump_geodata.sql
+Enter password:
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqldump -u root -p geodata > dump_geodata.sql
+Enter password:
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqldump --no-data -u root -p geodata > schema_geodata.sql
+Enter password:
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqladmin -u root -p drop geodata
+Enter password:
+Dropping the database is potentially a very bad thing to do.
+Any data stored in the database will be destroyed.
+
+Do you really want to drop the 'geodata' database [y/N] y
+Database "geodata" dropped
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqlshow -u root -p
+Enter password:
++--------------------+
+|     Databases      |
++--------------------+
+| information_schema |
+| employees          |
+| gb-mysql-first     |
+| gb-php             |
+| mysql              |
+| performance_schema |
++--------------------+
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqladmin -u root -p create geodata
+Enter password:
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqlshow -u root -p
+Enter password:
++--------------------+
+|     Databases      |
++--------------------+
+| information_schema |
+| employees          |
+| gb-mysql-first     |
+| gb-php             |
+| geodata            |
+| mysql              |
+| performance_schema |
++--------------------+
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysql -u root -p geodata < dump_geodata.sql
+Enter password:
+
+x:\OSPanel\domains\gb-mysql.local\hw7>mysqlshow -u root -p geodata
+Enter password:
+Database: geodata
++------------+
+|   Tables   |
++------------+
+| _cities    |
+| _countries |
+| _regions   |
++------------+
